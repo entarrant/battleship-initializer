@@ -4,9 +4,10 @@ For each ship:
   Pick random x,y from 0..9
     If square is taken, mark in grid, decrement counter, and keep looking
     If square is available
+      Make array to represent which directions have been guessed
       Randomly select 1..4 (left, right, up, down)
       Attempt to place self in that direction
-        If can't, mark first square that is already taken, decrement counter, and randomly pick from remaining directions, and repeat
+        If can't, mark first square that is already taken, decrement counter, mark direction as invalid, and randomly pick from remaining directions, and repeat
           If all four options are blocked, mark square as effectively taken, decrement counter and start back at line 2
         If can place self, write to board and break
     If no valid placements are found (the counter reaches 0), raise an error
