@@ -16,6 +16,7 @@ end
 # |         Helper methods          |
 # -----------------------------------
 
+BOARD_DIMENSION = 10.freeze
 TOTAL_SQUARES = 100.freeze
 DIRECTION_GUESSES = 4.freeze
 
@@ -26,7 +27,7 @@ DOWN = 3.freeze
 
 def create_board
   board_array = []
-  10.times do
+  BOARD_DIMENSION.times do
     board_array << %w(. . . . . . . . . .)
   end
 
@@ -61,7 +62,6 @@ def write_ship_placement(ship, x_coor, y_coor, direction)
   curr_x = x_coor
   curr_y = y_coor
 
-
   ship.size.times do
     @board_array[curr_y][curr_x] = ship.letter
 
@@ -77,7 +77,6 @@ def write_ship_placement(ship, x_coor, y_coor, direction)
     else
       raise 'A direction was not passed'
     end
-
   end
 end
 
@@ -90,7 +89,7 @@ def check_surroundings_for_placement(ship, x_coor, y_coor, attempted_squares)
     break if directions_left_to_guess <= 0
 
     # Get a direction
-    dir_num = rand(4)
+    dir_num = rand(DIRECTION_GUESSES)
     direction = attempted_directions[dir_num]
 
     # We already checked in this direction
@@ -108,7 +107,7 @@ def check_surroundings_for_placement(ship, x_coor, y_coor, attempted_squares)
 
       # Moving in this direction goes off the board
       # Need to pick new direction
-      if curr_x < 0 || curr_x > 9 || curr_y < 0 || curr_y > 9
+      if curr_x < 0 || curr_x >= BOARD_DIMENSION || curr_y < 0 || curr_y >= BOARD_DIMENSION
         attempted_directions[dir_num] = 'X'
         directions_left_to_guess -= 1
         break
@@ -157,8 +156,8 @@ def attempt_ship_placement(ship)
     end
 
     # Check a random square
-    x_coor = rand(10)
-    y_coor = rand(10)
+    x_coor = rand(BOARD_DIMENSION)
+    y_coor = rand(BOARD_DIMENSION)
 
     square = attempted_squares[y_coor][x_coor]
     # We already tried this square
