@@ -1,0 +1,12 @@
+For each ship:
+  Have a grid that keeps track of what squares it has guessed and a counter representing the number of squares left to guess (100)
+
+  Pick random x,y from 1..10
+    If square is taken, mark in grid, decrement counter, and keep looking
+    If square is available
+      Randomly select 1..4 (left, right, up, down)
+      Attempt to place self in that direction
+        If can't, mark first square that is already taken, decrement counter, and randomly pick from remaining directions, and repeat
+          If all four options are blocked, mark square as effectively taken, decrement counter and start back at line 2
+        If can place self, write to board and break
+    If no valid placements are found (the counter reaches 0), raise an error
