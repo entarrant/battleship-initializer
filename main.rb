@@ -186,10 +186,8 @@ end
 @board_array = create_board
 create_ships
 
-# [@cruiser, @battleship, @submarine, @destroyer, @tug]. each do |ship|
-#   attempt_ship_placement(ship)
-# end
-
-attempt_ship_placement(@cruiser)
+[@cruiser, @battleship, @submarine, @destroyer, @tug]. each do |ship|
+  attempt_ship_placement(ship)
+end
 
 print_board_state(@board_array)
