@@ -81,11 +81,75 @@ def write_ship_placement(ship, x_coor, y_coor, direction)
   end
 end
 
+def check_surroundings_for_placement(ship, x_coor, y_coor, attempted_squares)
+  attempted_directions = %w(. . . .)
+  directions_left_to_guess = DIRECTION_GUESSES
+
+  loop do
+    # This square is available but there are no valid placements around it
+    break if directions_left_to_guess <= 0
+
+    # Get a direction
+    dir_num = rand(4)
+    direction = attempted_directions[dir_num]
+
+    # We already checked in this direction
+    next if direction == 'X'
+
+    # Direction has not yet been checked
+    # Check for valid placement in that direction
+    curr_x = x_coor
+    curr_y = y_coor
+
+    (1..ship.size - 1).each do |idx|
+      next_coors = coordinates_in_direction(curr_x, curr_y, dir_num)
+      curr_y = next_coors[0]
+      curr_x = next_coors[1]
+
+      # Moving in this direction goes off the board
+      # Need to pick new direction
+      if curr_x < 0 || curr_x > 9 || curr_y < 0 || curr_y > 9
+        attempted_directions[dir_num] = 'X'
+        directions_left_to_guess -= 1
+        break
+      end
+
+      next_square = attempted_squares[curr_y][curr_x]
+
+      # Moving in this direction hits a square that's already been seen
+      # Need to pick new direction
+      if next_square.nil? || next_square == 'X'
+        attempted_directions[dir_num] = 'X'
+        directions_left_to_guess -= 1
+        break
+      end
+
+      # Square is already taken on main board; need to pick a new direction
+      if @board_array[y_coor][x_coor] != '.'
+        attempted_directions[dir_num] = 'X'
+        directions_left_to_guess -= 1
+        break
+      end
+
+      # Square is available!
+
+      # Entire ship has been placed
+      # Write this placement to the board and finish
+      if idx + 1 == ship.size
+        write_ship_placement(ship, x_coor, y_coor, dir_num)
+        return []
+      end
+
+      # The full ship hasn't been placed
+      # Repeat loop and check if next square is valid and available.
+    end
+  end
+  attempted_squares
+end
+
 def attempt_ship_placement(ship)
   attempted_squares = create_board
   squares_left_to_guess = TOTAL_SQUARES
-
-  success = false
 
   loop do
     if squares_left_to_guess <= 0
@@ -109,69 +173,9 @@ def attempt_ship_placement(ship)
 
     # Square is available
     # Check for valid placements in cardinal directions
-    attempted_directions = %w(. . . .)
-    directions_left_to_guess = DIRECTION_GUESSES
-    loop do
-      # This square is available but there are no valid placements around it
-      break if directions_left_to_guess <= 0
-
-      # Get a direction
-      dir_num = rand(4)
-      direction = attempted_directions[dir_num]
-
-      # We already checked in this direction
-      next if direction == 'X'
-
-      # Direction has not yet been checked
-      # Check for valid placement in that direction
-      curr_x = x_coor
-      curr_y = y_coor
-
-      (1..ship.size - 1).each do |idx|
-        next_coors = coordinates_in_direction(curr_x, curr_y, dir_num)
-        curr_y = next_coors[0]
-        curr_x = next_coors[1]
-
-        # Moving in this direction goes off the board
-        # Need to pick new direction
-        if curr_x < 0 || curr_x > 9 || curr_y < 0 || curr_y > 9
-          attempted_directions[dir_num] = 'X'
-          directions_left_to_guess -= 1
-          break
-        end
-
-        next_square = attempted_squares[curr_y][curr_x]
-
-        # Moving in this direction hits a square that's already been seen
-        # Need to pick new direction
-        if next_square.nil? || next_square == 'X'
-          attempted_directions[dir_num] = 'X'
-          directions_left_to_guess -= 1
-          break
-        end
-
-        # Square is already taken on main board; need to pick a new direction
-        if @board_array[y_coor][x_coor] != '.'
-          attempted_directions[dir_num] = 'X'
-          directions_left_to_guess -= 1
-          break
-        end
-
-        # Square is available!
-
-        # Entire ship has been placed
-        # Write this placement to the board and finish
-        if idx + 1 == ship.size
-          write_ship_placement(ship, x_coor, y_coor, dir_num)
-          success = true
-          break
-        end
-
-        # The full ship hasn't been placed
-        # Repeat loop and check if next square is valid and available.
-      end
-    end
-    break if success
+    attempted_squares = check_surroundings_for_placement(ship, x_coor, y_coor, attempted_squares)
+    # Empty attempts indicates we placed successfully
+    break if attempted_squares.empty?
   end
 end
 
