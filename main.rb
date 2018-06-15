@@ -43,7 +43,7 @@ def create_ships
 end
 
 def coordinates_in_direction(x_coor, y_coor, direction)
-  pair = case direction
+  case direction
   when LEFT
     [y_coor, x_coor - 1]
   when RIGHT
@@ -55,7 +55,6 @@ def coordinates_in_direction(x_coor, y_coor, direction)
   else
     raise 'A direction was not passed'
   end
-  pair
 end
 
 def write_ship_placement(ship, x_coor, y_coor, direction)
@@ -117,7 +116,7 @@ def check_surroundings_for_placement(ship, x_coor, y_coor, attempted_squares)
 
       # Moving in this direction hits a square that's already been seen
       # Need to pick new direction
-      if next_square.nil? || next_square == 'X'
+      if next_square == 'X'
         attempted_directions[dir_num] = 'X'
         directions_left_to_guess -= 1
         break
