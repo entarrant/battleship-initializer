@@ -123,7 +123,7 @@ def check_surroundings_for_placement(ship, x_coor, y_coor, attempted_squares)
       end
 
       # Square is already taken on main board; need to pick a new direction
-      if @board_array[y_coor][x_coor] != '.'
+      if @board_array[curr_y][curr_x] != '.'
         attempted_directions[dir_num] = 'X'
         directions_left_to_guess -= 1
         break
