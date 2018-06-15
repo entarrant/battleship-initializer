@@ -1,7 +1,7 @@
 For each ship:
   Have a grid that keeps track of what squares it has guessed and a counter representing the number of squares left to guess (100)
 
-  Pick random x,y from 1..10
+  Pick random x,y from 0..9
     If square is taken, mark in grid, decrement counter, and keep looking
     If square is available
       Randomly select 1..4 (left, right, up, down)
